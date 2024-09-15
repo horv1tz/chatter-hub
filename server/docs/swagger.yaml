@@ -1,0 +1,429 @@
+basePath: /
+definitions:
+  config.ErrorResponse:
+    properties:
+      error:
+        example: Описание ошибки
+        type: string
+    type: object
+  config.SimpleResponse:
+    properties:
+      message:
+        example: Операция выполнена успешно
+        type: string
+    type: object
+  config.TextMessage:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      receiver_id:
+        type: string
+      sender_id:
+        type: string
+    type: object
+  config.User:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      id:
+        example: "12345"
+        type: string
+      is_active:
+        description: Новое поле
+        type: boolean
+      password:
+        example: secret
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  config.VoiceMessage:
+    properties:
+      created_at:
+        type: string
+      file_url:
+        type: string
+      id:
+        type: integer
+      receiver_id:
+        type: string
+      sender_id:
+        type: string
+    type: object
+  users.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    type: object
+  users.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для мессенджера.
+  title: Messenger API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Аутентифицирует пользователя и возвращает JWT токен
+      parameters:
+      - description: Учетные данные пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/users.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/users.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Аутентификация пользователя
+      tags:
+      - users
+  /messages/text:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список текстовых сообщений между двумя пользователями
+      parameters:
+      - description: ID отправителя
+        in: query
+        name: sender_id
+        required: true
+        type: string
+      - description: ID получателя
+        in: query
+        name: receiver_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/config.TextMessage'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Получение текстовых сообщений
+      tags:
+      - text
+    post:
+      consumes:
+      - application/json
+      description: Отправляет текстовое сообщение от одного пользователя к другому
+      parameters:
+      - description: Текстовое сообщение
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/config.TextMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.SimpleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Отправка текстового сообщения
+      tags:
+      - text
+  /messages/voice:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список голосовых сообщений между двумя пользователями
+      parameters:
+      - description: ID отправителя
+        in: query
+        name: sender_id
+        required: true
+        type: string
+      - description: ID получателя
+        in: query
+        name: receiver_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/config.VoiceMessage'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Получение голосовых сообщений
+      tags:
+      - voice
+    post:
+      consumes:
+      - multipart/form-data
+      description: Отправляет голосовое сообщение от одного пользователя к другому
+      parameters:
+      - description: ID отправителя
+        in: formData
+        name: sender_id
+        required: true
+        type: string
+      - description: ID получателя
+        in: formData
+        name: receiver_id
+        required: true
+        type: string
+      - description: Аудиофайл
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.SimpleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Отправка голосового сообщения
+      tags:
+      - voice
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя и возвращает JWT токен
+      parameters:
+      - description: Информация о пользователе
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/config.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: "token\"\t\"JWT токен"
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Создание пользователя
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет пользователя по ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.SimpleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Удаление пользователя
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию о пользователе по ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Получение информации о пользователе
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о пользователе по ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Обновленная информация о пользователе
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/config.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Обновление информации о пользователе
+      tags:
+      - users
+  /users/{id}/activate:
+    post:
+      consumes:
+      - application/json
+      description: Активирует учетную запись пользователя по ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.SimpleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Активация пользователя
+      tags:
+      - users
+  /users/{id}/deactivate:
+    post:
+      consumes:
+      - application/json
+      description: Деактивирует учетную запись пользователя по ID
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/config.SimpleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/config.ErrorResponse'
+      summary: Деактивация пользователя
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

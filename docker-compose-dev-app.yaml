@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"      # S3 API
+      - "9001:9001"      # MinIO Console
+    command: server /data --console-address ":9001"
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6
+    container_name: redis
+    command: ["redis-server", "--requirepass", "myredispassword"] # Устанавливаем пароль через команду
+    ports:
+      - "6379:6379"
+
+volumes:
+  minio_data:
+  pg_data:
