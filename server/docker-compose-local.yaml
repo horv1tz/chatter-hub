@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatter-hub-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+      - minio
+
   minio:
     image: minio/minio
     container_name: minio
@@ -20,6 +32,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chat
     volumes:
       - pg_data:/var/lib/postgresql/data
     ports:
@@ -28,7 +41,7 @@ services:
   redis:
     image: redis:6
     container_name: redis
-    command: ["redis-server", "--requirepass", "myredispassword"] # Устанавливаем пароль через команду
+    command: ["redis-server", "--requirepass", "redis"] # Устанавливаем пароль через команду
     ports:
       - "6379:6379"
 
