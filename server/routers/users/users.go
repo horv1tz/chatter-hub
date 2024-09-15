@@ -12,16 +12,16 @@ import (
 )
 
 // CreateUser godoc
-//	@Summary		Создание пользователя
-//	@Description	Создает нового пользователя и возвращает JWT токен
-//	@Tags			users
-//	@Accept			json
-//	@Produce		json
-//	@Param			user	body		config.User			true	"Информация о пользователе"
-//	@Success		200		{object}	map[string]string	"token"	"JWT токен"
-//	@Failure		400		{object}	config.ErrorResponse
-//	@Failure		500		{object}	config.ErrorResponse
-//	@Router			/users [post]
+// @Summary      Создание пользователя
+// @Description  Создает нового пользователя и возвращает JWT токен
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      config.User       true  "Информация о пользователе"
+// @Success      200   {object}  map[string]string "token" "JWT токен"
+// @Failure      400   {object}  config.ErrorResponse
+// @Failure      500   {object}  config.ErrorResponse
+// @Router       /users [post]
 func CreateUser(c *gin.Context) {
     var user config.User
     if err := c.ShouldBindJSON(&user); err != nil {
@@ -37,7 +37,7 @@ func CreateUser(c *gin.Context) {
     }
     user.Password = string(hashedPassword)
 
-    // Генерируем уникальный ID
+    // Генерируем уникальный ID для пользователя
     user.ID = uuid.New().String()
 
     // Сохраняем пользователя в базе данных
@@ -54,7 +54,7 @@ func CreateUser(c *gin.Context) {
     }
 
     // Генерируем JWT токен
-    token, err := auth.GenerateToken(user.ID, cfg)
+    token, err := auth.GenerateToken(user.ID, cfg) // user.ID - это строка
     if err != nil {
         c.JSON(http.StatusInternalServerError, config.ErrorResponse{Error: "Ошибка создания JWT токена"})
         return
@@ -63,18 +63,17 @@ func CreateUser(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-
 // GetUser godoc
-//	@Summary		Получение информации о пользователе
-//	@Description	Возвращает информацию о пользователе по ID
-//	@Tags			users
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		string	true	"ID пользователя"
-//	@Success		200	{object}	config.User
-//	@Failure		404	{object}	config.ErrorResponse
-//	@Failure		500	{object}	config.ErrorResponse
-//	@Router			/users/{id} [get]
+// @Summary      Получение информации о пользователе
+// @Description  Возвращает информацию о пользователе по ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string     true  "ID пользователя"
+// @Success      200   {object}  config.User
+// @Failure      404   {object}  config.ErrorResponse
+// @Failure      500   {object}  config.ErrorResponse
+// @Router       /users/{id} [get]
 func GetUser(c *gin.Context) {
     userID := c.Param("id")
     var user config.User
@@ -99,17 +98,17 @@ func GetUser(c *gin.Context) {
 }
 
 // UpdateUser godoc
-//	@Summary		Обновление информации о пользователе
-//	@Description	Обновляет информацию о пользователе по ID
-//	@Tags			users
-//	@Accept			json
-//	@Produce		json
-//	@Param			id		path		string		true	"ID пользователя"
-//	@Param			user	body		config.User	true	"Обновленная информация о пользователе"
-//	@Success		200		{object}	config.User
-//	@Failure		400		{object}	config.ErrorResponse
-//	@Failure		500		{object}	config.ErrorResponse
-//	@Router			/users/{id} [put]
+// @Summary      Обновление информации о пользователе
+// @Description  Обновляет информацию о пользователе по ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string         true  "ID пользователя"
+// @Param        user  body      config.User    true  "Обновленная информация о пользователе"
+// @Success      200   {object}  config.User
+// @Failure      400   {object}  config.ErrorResponse
+// @Failure      500   {object}  config.ErrorResponse
+// @Router       /users/{id} [put]
 func UpdateUser(c *gin.Context) {
     userID := c.Param("id")
     var user config.User
@@ -148,15 +147,15 @@ func UpdateUser(c *gin.Context) {
 }
 
 // DeleteUser godoc
-//	@Summary		Удаление пользователя
-//	@Description	Удаляет пользователя по ID
-//	@Tags			users
-//	@Accept			json
-//	@Produce		json
-//	@Param			id	path		string	true	"ID пользователя"
-//	@Success		200	{object}	config.SimpleResponse
-//	@Failure		500	{object}	config.ErrorResponse
-//	@Router			/users/{id} [delete]
+// @Summary      Удаление пользователя
+// @Description  Удаляет пользователя по ID
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id    path      string  true  "ID пользователя"
+// @Success      200   {object}  config.SimpleResponse
+// @Failure      500   {object}  config.ErrorResponse
+// @Router       /users/{id} [delete]
 func DeleteUser(c *gin.Context) {
     userID := c.Param("id")
 
@@ -178,7 +177,6 @@ func DeleteUser(c *gin.Context) {
 
     c.JSON(http.StatusOK, config.SimpleResponse{Message: "Пользователь удален"})
 }
-
 
 // LoginUser godoc
 // @Summary      Аутентификация пользователя

@@ -301,7 +301,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "token\"\t\"JWT токен",
+                        "description": "token\" \"JWT токен",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
