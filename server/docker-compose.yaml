@@ -1,0 +1,70 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_USER=youruser
+      - DB_PASSWORD=yourpassword
+      - DB_NAME=yourdb
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - JWT_SECRET=yourjwtsecret
+      - AWS_REGION=us-east-1
+      - S3_BUCKET=yourbucket
+      - S3_ENDPOINT=http://s3:9000
+      - S3_ACCESS_KEY=minio
+      - S3_SECRET_KEY=minio123
+    depends_on:
+      postgres:
+        condition: service_healthy
+      s3:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: youruser
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: yourdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U youruser -d yourdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  s3:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: server /data
+    volumes:
+      - minio_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:

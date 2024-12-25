@@ -1,0 +1,65 @@
+<!-- templates/Chat.html -->
+<div class="flex h-screen flex-col">
+    <!-- Верхняя панель -->
+    <header class="bg-blue-500 text-white p-4 flex justify-between items-center">
+        <h1 id="chatTitle" class="text-xl font-bold">Чаты</h1>
+        <div class="flex items-center space-x-4">
+            <button id="userInfoBtn" class="text-white hover:underline">Профиль</button>
+        </div>
+    </header>
+
+    <div class="flex flex-grow overflow-hidden">
+        <!-- Список чатов и создание нового чата -->
+        <div class="w-1/4 bg-gray-100 border-r overflow-y-auto p-4">
+            <!-- Форма для создания нового чата -->
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold mb-2">Начать новый чат</h3>
+                <div class="flex space-x-2">
+                    <input 
+                        id="newChatUsername" 
+                        type="text" 
+                        placeholder="Логин пользователя" 
+                        class="flex-grow p-2 border border-gray-300 rounded-md"
+                    >
+                    <button 
+                        id="startNewChatBtn" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    >
+                        Начать
+                    </button>
+                </div>
+            </div>
+
+            <!-- Список чатов -->
+            <ul id="chatList" class="divide-y divide-gray-200">
+                <!-- Чаты будут динамически загружаться через renderer.js -->
+            </ul>
+        </div>
+
+        <!-- Секция чата -->
+        <div class="flex-grow flex flex-col">
+            <main id="chat" class="flex-grow overflow-y-auto p-4 bg-white space-y-4">
+                <p class="text-gray-500 text-center">Выберите чат или начните новый</p>
+            </main>
+
+            <!-- Поле ввода сообщения -->
+            <footer class="bg-gray-200 p-4 flex items-center space-x-2">
+                <input 
+                    id="messageInput" 
+                    type="text" 
+                    placeholder="Введите сообщение..." 
+                    class="flex-grow p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Введите сообщение"
+                    disabled
+                >
+                <button 
+                    id="sendBtn" 
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                    disabled
+                >
+                    Отправить
+                </button>
+            </footer>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Messenger App</title>
+  <!-- Подключаем Tailwind CSS через CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Подключаем SweetAlert2 через CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Подключаем Axios через CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- Подключаем Socket.io Client через CDN -->
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  
+</head>
+
+<body>
+  <!-- Навигационная панель -->
+  <nav class="bg-gray-800 p-4">
+    <a href="#" data-view="login" class="text-white mr-4">Login</a>
+    <a href="#" data-view="registration" class="text-white mr-4">Registration</a>
+    <a href="#" data-view="chat" class="text-white">Chat</a>
+  </nav>
+
+  <!-- Контейнер для загрузки представлений -->
+  <div id="app" class="p-4">
+    <!-- Содержимое будет динамически загружаться сюда -->
+  </div>
+
+  <!-- Подключаем renderer.js после загрузки всех библиотек -->
+  <script src="renderer.js"></script>
+</body>
+
+</html>

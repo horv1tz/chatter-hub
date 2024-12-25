@@ -1,2 +1,5 @@
 # Python ignore
 venv/
+
+#JavaScript
+node_modules/
