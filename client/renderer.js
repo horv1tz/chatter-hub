@@ -402,7 +402,7 @@ async function createNewChat(username) {
 
         const response = await axios.post(`${API_URL}/api/create-chat`, 
             { 
-                type: 'dialog', // Изменено на 'dialog' вместо 'private'
+                type: 'personal', // Тип чата: personal или group
                 name: `Чат с ${username}`, 
                 user_ids: [otherUserId] 
             },
